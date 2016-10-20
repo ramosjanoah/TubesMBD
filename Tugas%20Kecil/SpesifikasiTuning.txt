@@ -1,0 +1,216 @@
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+Pertama-tama, buatlah query untuk menampilkan semua nama sutradara, beserta nama depan aktor
+dan nama belakang aktor yang paling sering bermain dalam film garapan sutradara tersebut. Urutkan
+berdasarkan banyak jumlah penonton untuk masing-masing sutradara, serta sebutkan genre yang paling sering
+dibuat oleh sutradara tersebut. Setelah itu, lakukan tuning terhadap skema basis data agar performansi
+pemrosesan query tersebut menjadi lebih baik. Cara untuk melakukan tuning dibebaskan kepada peserta,
+Gunakan minimal tiga cara tuning terhadap skema seperti yang diajarkan di kuliah, untuk setiap cara jelaskan:
+- Proses yang dilakukan
+- Alasan pemilihan cara tersebut
+- Hasil pemrosesan yang didapatkan (cantumkan hasil pada laporan)
+- Skema hasil perubahan dan query untuk migrasi ke struktur basis data baru
+
+
+
+Select count(NamaDepanAktor)
+FROM sutradara 
+natural join film 
+natural join aktorfilm 
+natural join aktor
+GROUP BY
+NamaDepanSutradara, NamaDepanAktor
+
+
+Select NamaDepanSutradara, NamaDepanAktor, max(NamaDepanAktor)
+FROM sutradara 
+natural join film 
+natural join aktorfilm 
+natural join aktor
+GROUP BY
+NamaDepanSutradara, NamaDepanAktor
+
+
+
+SELECT NamaDepanSutradara, NamaDepanAktor,
+	(Select count(AktorID)
+	FROM sutradara 
+	natural join film 
+	natural join aktorfilm 
+	natural join aktor
+	GROUP BY
+	NamaDepanSutradara, NamaDepanAktor) as amount
+FROM sutradara 
+natural join film 
+natural join aktorfilm 
+natural join aktor
+GROUP BY NamaDepanSutradara, NamaDepanAktor;
+
+
+SELECT 
+FROM S
+
+
+
+SELECT SutradaraID, MAX(Counted) as maks
+FROM (	SELECT SutradaraID, NamaDepanSutradara, AktorID, NamaDepanAktor, count(AktorID) AS counted
+		FROM sutradara 
+		natural join film 
+		natural join aktorfilm 
+		natural join aktor
+		GROUP BY SutradaraID, AktorID, SutradaraID, NamaDepanSutradara, NamaDepanAktor ) AS VVV
+GROUP BY SutradaraID
+
+
+WITH TableJoin as (
+	SELECT SutradaraID, NamaDepanSutradara, AktorID, NamaDepanAktor, count(AktorID) AS counted
+		FROM sutradara 
+		natural join film 
+		natural join aktorfilm 
+		natural join aktor
+		GROUP BY SutradaraID, AktorID, SutradaraID, NamaDepanSutradara, NamaDepanAktor
+)
+	SELECT SutradaraID, Max(counted) as maks
+	FROM TableJoin 
+	GROUP BY SutradaraID
+	ORDER BY SutradaraID;
+
+-- Kueri Cari Aktor Maksimum
+SELECT SutradaraID, 
+max(NamaDepanSutradara) as NamaDepanSutradara, 
+max(NamaBelakangSutradara) as NamaBelakangSutradara, 
+max(AktorID) as AktorID, 
+max(NamaDepanAktor) as NamaDepanAktor, 
+max(NamaBelakangAktor) as NamaBelakangSutradara, 
+max(maks) as Count
+FROM ( 	SELECT SutradaraID, MAX(Counted) as maks
+		FROM (	SELECT SutradaraID, AktorID, count(AktorID) AS counted
+				FROM sutradara 
+				natural join film 
+				natural join aktorfilm 
+				natural join aktor
+				GROUP BY SutradaraID, AktorID, SutradaraID ) AS T1
+		GROUP BY SutradaraID) as TMax
+		natural join 
+	(	SELECT SutradaraID, NamaDepanSutradara, NamaBelakangSutradara, AktorID, NamaDepanAktor, NamaBelakangAktor, count(AktorID) AS counted
+		FROM sutradara 
+		natural join film 
+		natural join aktorfilm 
+		natural join aktor
+		GROUP BY SutradaraID, NamaDepanSutradara, NamaBelakangSutradara, AktorID, NamaDepanAktor, NamaBelakangAktor) as T2
+WHERE counted = maks
+GROUP BY SutradaraID;
+
+SELECT SutradaraID, MAX(Counted) as maks
+		FROM (	SELECT SutradaraID, NamaDepanSutradara, AktorID, NamaDepanAktor, count(AktorID) AS counted
+				FROM sutradara 
+				natural join film 
+				natural join aktorfilm 
+				natural join aktor
+				GROUP BY SutradaraID, AktorID, SutradaraID, NamaDepanSutradara, NamaDepanAktor ) AS VVV
+		GROUP BY SutradaraID
+
+
+-- Kueri Cari Jumlah yang nonton sutradara
+Select SutradaraID, PenontonID
+FROM sutradara 
+	natural join film
+	natural join penontonfilm
+GROUP BY SutradaraID
+ORDER BY SutradaraID;
+
+
+-- Please
+SELECT SutradaraID, 
+max(NamaDepanSutradara) as NamaDepanSutradara, 
+max(NamaBelakangSutradara) as NamaBelakangSutradara, 
+max(AktorID) as AktorID, 
+max(NamaDepanAktor) as NamaDepanAktor, 
+max(NamaBelakangAktor) as NamaBelakangAktor, 
+max(maks) as Count,
+max(JumlahPenontonSutradara) as JumlahPenontonSutradara
+FROM ( 	SELECT SutradaraID, MAX(Counted) as maks
+		FROM (	SELECT SutradaraID, AktorID, count(AktorID) AS counted
+				FROM sutradara 
+				natural join film 
+				natural join aktorfilm 
+				natural join aktor
+				GROUP BY SutradaraID, AktorID ) AS T1
+		GROUP BY SutradaraID) as TMax
+		natural join 
+	(	SELECT SutradaraID, NamaDepanSutradara, NamaBelakangSutradara, AktorID, NamaDepanAktor, NamaBelakangAktor, count(AktorID) AS counted
+		FROM sutradara 
+		natural join film 
+		natural join aktorfilm 
+		natural join aktor
+		GROUP BY SutradaraID, NamaDepanSutradara, NamaBelakangSutradara, AktorID, NamaDepanAktor, NamaBelakangAktor) as T2
+		natural join 
+	( 	SELECT SutradaraID, count(PenontonID) as JumlahPenontonSutradara
+		FROM sutradara 
+			natural join film
+			natural join penontonfilm
+		GROUP BY SutradaraID
+	) as T3
+WHERE counted = maks
+GROUP BY SutradaraID
+ORDER BY JumlahPenontonSutradara;
+
+
+
+SELECT SutradaraID, genre 
+FROM (
+	SELECT SutradaraID, MAX(counted2) as maks2 
+	FROM (
+	 SELECT SutradaraID, genre, count(genre) as counted2
+			FROM sutradara
+			natural join film
+			natural join genrefilm
+			natural join genre
+			GROUP BY SutradaraID, genre
+			ORDER BY SutradaraID ) as T3
+	GROUP BY SutradaraID
+	) as T4
+	natural join 
+	( SELECT SutradaraID, genre, count(genre) as counted3
+			FROM sutradara
+			natural join film
+			natural join genrefilm
+			natural join genre
+			GROUP BY SutradaraID, genre
+			ORDER BY SutradaraID ) as T5
+where T4.maks2 = T5.counted3;
+
+
+
+
+SELECT filmID, genre
+FROM film 
+natural join genrefilm
+natural join genre;
+
+Select * from sutradara
+natural join film
+natural join genrefilm
+natural join genre
+order by sutradaraID;
+
+Select * from sutradara 
+natural join film
+natural join genrefilm
+order by sutradaraID;
+
+
+
+
+	SELECT SutradaraID, filmID, genre
+	FROM sutradara
+	natural join film 
+	natural join genrefilm
+	natural join genre
+	WHERE SutradaraID = 3;

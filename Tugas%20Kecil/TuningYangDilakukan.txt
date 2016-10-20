@@ -1,0 +1,87 @@
+Tuning Yang dilakukan:
+Collapsing Tables: 
+	ALASAN:
+	Alasan pemilihan cara ini adalah cara ini cukup efektif untuk mempercepat query, 
+	karena mengurangi natural join yang terjadi pada query. 
+	- Menyatukan tabel mbd.genre dan mbd.genrefilm
+		Kueri :
+		(1)
+		ALTER TABLE genrefilm 
+		ADD COLUMN namagenre character varying(20);
+		(2)
+		UPDATE genrefilm
+		SET namagenre = genre.namagenre
+		FROM genre
+		WHERE genrefilm.genreid = genre.genreid
+
+Adding Redundant Column: 
+	ALASAN:
+	Sama seperti Collapsing tables, cara ini cukup efektif untuk mempercepat
+	query karena mengurangi natural join yang terjadi pada query.
+	- 	Menambahkan kolom NamaDepanStutradara dan NamaBelakangSutradara pada 
+		tabel film agar mengurangi natural join dengan sutradara.
+			Kueri :
+			(1);
+			ALTER TABLE film
+			ADD COLUMN 	NamaDepanSutradara character varying(255),
+			ADD COLUMN NamaBelakangSutradara character varying(255);
+			(2);
+			Update film
+			SET NamaDepanSutradara = sutradara.NamaDepanSutradara,
+				NamaBelakangSutradara = sutradara.NamaBelakangSutradara
+			FROM sutradara
+			where film.sutradaraID = sutradara.sutradaraID;
+	- Menambahkan kolom NamaDepanAktor dan NamaBelakangAktor pada tabel aktorfilm.
+		Tujuannya adalah untuk mengurangi natural join yang terjadi.
+			Kueri :
+			(1)
+			ALTER TABLE aktorfilm
+			ADD COLUMN NamaDepanAktor character varying(255),
+			ADD COLUMN NamaBelakangAktor character varying(255);
+			(2)
+			Update aktorfilm
+			SET NamaDepanAktor = aktor.NamaDepanAktor,
+				NamaBelakangAktor = aktor.NamaBelakangAktor
+			FROM aktor
+			where aktor.AktorID = aktorfilm.AktorID;
+
+Vertical Splitting: 
+	Memisahkan film(FilmID, SutradaraID, NamaDepanSutradara, NamaBelakangSutradara, 
+					Judul, TanggalRilis, Rating, LamaFilm)
+	menjadi film_s(FilmID, SutradaraID, NamaDepanSutradara, NamaBelakangSutradara)
+	dan film_data(FilmID, Judul, TanggalRilis, Rating, LamaFilm)
+
+	ALASAN: Cara ini dipilih karena dapat mempercepat query dengan cara mengurangi 
+			jumlah kolom yang diakses pada tabel film.
+			Kueri
+			(1); 
+			ALTER TABLE film RENAME To film_s;
+			(2);
+			CREATE TABLE film_data as TABLE film_s;
+			(3);
+			ALTER TABLE film_s 
+			DROP COLUMN judul, 
+			DROP tanggalrilis,
+			DROP rating,
+			DROP lamafilm;
+			(4);
+			ALTER TABLE film_data 
+			DROP COLUMN sutradaraid, 
+			DROP COLUMN namadepansutradara,
+			DROP COLUMN namabelakangsutradara;
+
+Adding derived Atributes:
+	Menambahkan atribut turunan JumlahPenonton dari hasil perhitungan jumlah penonton
+	pada tabel mbd.film
+	ALASAN: Agar perhitungan untuk jumlah penonton langsung ada pada tabel dan
+			tidak perlu lagi dihitung dari tabel penonton
+	Kueri: 
+	(1)	
+	ALTER TABLE film_s
+	ADD COLUMN count_penonton int;
+	(2)
+	UPDATE film
+	SET count_penonton = T1.JumlahPenonton
+	FROM (SELECT filmid, count(penontonid) as JumlahPenonton
+			FROM penontonfilm group by filmid) as T1
+	WHERE film.filmid = T1.filmid;

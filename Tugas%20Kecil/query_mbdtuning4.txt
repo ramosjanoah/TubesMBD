@@ -1,0 +1,66 @@
+\c mbdtuning4;
+explain analyze
+WITH 
+tableA as (
+	SELECT Distinct on (SutradaraID) SutradaraID, 
+	NamaDepanSutradara,
+	NamaBelakangSutradara,
+	AktorID,
+	NamaDepanAktor,
+	NamaBelakangAktor,
+	maks,
+	JumlahPenontonSutradara
+	FROM ( 	SELECT SutradaraID, MAX(Counted) as maks
+			FROM (	SELECT SutradaraID, AktorID, count(AktorID) AS counted
+					FROM sutradara 
+					natural join film 
+					natural join aktorfilm 
+					natural join aktor
+					GROUP BY SutradaraID, AktorID ) AS T1
+			GROUP BY SutradaraID) as TMax
+			natural join 
+		(	SELECT SutradaraID, NamaDepanSutradara, NamaBelakangSutradara, 
+			AktorID, NamaDepanAktor, NamaBelakangAktor, count(AktorID) AS counted
+			FROM sutradara 
+			natural join film 
+			natural join aktorfilm 
+			natural join aktor
+			GROUP BY SutradaraID, NamaDepanSutradara, NamaBelakangSutradara, 
+			AktorID, NamaDepanAktor, NamaBelakangAktor) as T2
+			natural join 
+		( 	SELECT SutradaraID, sum(count_penonton) as JumlahPenontonSutradara
+			FROM film
+			GROUP BY SutradaraID
+		) as T3
+	WHERE counted = maks
+), 
+tableB as (
+	SELECT Distinct on (SutradaraID) SutradaraID, genre 
+	FROM (
+		SELECT SutradaraID, MAX(counted2) as maks2 
+		FROM (
+		 SELECT SutradaraID, genre, count(genre) as counted2
+				FROM sutradara
+				natural join film
+				natural join genrefilm
+				natural join genre
+				GROUP BY SutradaraID, genre
+				ORDER BY SutradaraID ) as T3
+		GROUP BY SutradaraID
+		) as T4
+		natural join 
+		( SELECT SutradaraID, genre, count(genre) as counted3
+				FROM sutradara
+				natural join film
+				natural join genrefilm
+				natural join genre
+				GROUP BY SutradaraID, genre
+				ORDER BY SutradaraID ) as T5
+	WHERE T4.maks2 = T5.counted3
+)
+SELECT TableA.SutradaraID, namadepansutradara, namabelakangsutradara, 
+		aktorid, namadepanaktor, namabelakangaktor,
+		genre
+FROM tableA FULL OUTER JOIN tableB
+ON 	tableA.SutradaraID = tableB.SutradaraID
+ORDER BY JumlahPenontonSutradara DESC;
