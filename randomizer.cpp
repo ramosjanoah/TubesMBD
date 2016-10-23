@@ -33,10 +33,10 @@ void cellphonenumber (int n) {
 	}
 }
 
-void randnumber (int n, int size) {
+void randnumber (int n, int size, int begin, int end) {
 	for (int mhs = 1; mhs <= n; mhs++) {
 		for (int i = 1; i <= size; i++) {
-			cout << rand() % 10;
+			cout << rand() % (end - begin + 1) + begin;
 		}
 		cout << endl;
 	}
@@ -52,7 +52,52 @@ void rand01 (int n) {
 int main() {
 	//cellphonenumber(600);
 	//homephonenumber(600);
-	randnumber(80, 18);
+	//randnumber(80, 1, 2, 4);
+
+	for (int i = 0; i < 56; i++) {
+		cout << "IF" << i / 14 + 1 << (i / 7) % 2 + 1;
+		if (((i + 1) / 10) == 0) cout << 0;
+		cout << i + 1 << endl;
+	}
+	for (int i = 56; i < 70; i++) {
+		cout << "IF" << 5 << 0;
+		if (((i + 1) / 10) == 0) cout << 0;
+		cout << i + 1 << endl;
+	}
+
+	for (int i = 0; i < 56; i++) {
+		cout << "EL" << i / 14 + 1 << (i / 7) % 2 + 1;
+		if (((i + 1) / 10) == 0) cout << 0;
+		cout << i + 1 << endl;
+	}
+	for (int i = 56; i < 69; i++) {
+		cout << "EL" << 5 << 0;
+		if (((i + 1) / 10) == 0) cout << 0;
+		cout << i + 1 << endl;
+	}
+
+	for (int i = 0; i < 56; i++) {
+		cout << "AR" << i / 14 + 1 << (i / 7) % 2 + 1;
+		if (((i + 1) / 10) == 0) cout << 0;
+		cout << i + 1 << endl;
+	}
+	for (int i = 56; i < 70; i++) {
+		cout << "AR" << 5 << 0;
+		if (((i + 1) / 10) == 0) cout << 0;
+		cout << i + 1 << endl;
+	}
+
+	for (int i = 0; i < 56; i++) {
+		cout << "SI" << i / 14 + 1 << (i / 7) % 2 + 1;
+		if (((i + 1) / 10) == 0) cout << 0;
+		cout << i + 1 << endl;
+	}
+	for (int i = 56; i < 70; i++) {
+		cout << "SI" << 5 << 0;
+		if (((i + 1) / 10) == 0) cout << 0;
+		cout << i + 1 << endl;
+	}
+
 
 	/*int neffname;
 	vector<string> frontn;
