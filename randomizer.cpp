@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <ctime>
 
 using namespace std;
 
@@ -56,7 +57,8 @@ void randnilai (int n) {
 }
 
 int main() {
-	randnilai(3);
+	srand(time(0));
+	randnilai(4214);
 	//cellphonenumber(600);
 	//homephonenumber(600);
 	//randnumber(80, 1, 2, 4);
