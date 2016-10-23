@@ -49,12 +49,19 @@ void rand01 (int n) {
 	}
 }
 
+void randnilai (int n) {
+	for (int i = 1; i <= n; i++){
+		cout << rand() % 100 << endl;
+	}
+}
+
 int main() {
+	randnilai(3);
 	//cellphonenumber(600);
 	//homephonenumber(600);
 	//randnumber(80, 1, 2, 4);
 
-	for (int i = 0; i < 56; i++) {
+	/*for (int i = 0; i < 56; i++) {
 		cout << "IF" << i / 14 + 1 << (i / 7) % 2 + 1;
 		if (((i + 1) / 10) == 0) cout << 0;
 		cout << i + 1 << endl;
@@ -96,7 +103,7 @@ int main() {
 		cout << "SI" << 5 << 0;
 		if (((i + 1) / 10) == 0) cout << 0;
 		cout << i + 1 << endl;
-	}
+	}*/
 
 
 	/*int neffname;
