@@ -42,10 +42,17 @@ void randnumber (int n, int size) {
 	}
 }
 
+void rand01 (int n) {
+	for (int mhs = 1; mhs <= n; mhs++) {
+		cout << rand() % 2;
+		cout << endl;
+	}
+}
+
 int main() {
 	//cellphonenumber(600);
 	//homephonenumber(600);
-	randnumber(600,15);
+	randnumber(80, 18);
 
 	/*int neffname;
 	vector<string> frontn;
