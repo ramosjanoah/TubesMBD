@@ -51,14 +51,62 @@ void rand01 (int n) {
 }
 
 void randnilai (int n) {
+	int nilai;
+	char huruf[2];
+	float idx;
+	int jml = 1;
 	for (int i = 1; i <= n; i++){
-		cout << rand() % 100 << endl;
-	}
+		nilai = rand() % 60 + 41;
+		/*jml = 1;
+		nilai = rand() % 60 + 41;
+		if (nilai >= 80){
+			huruf[0] = 'A';
+			idx = 4;
+		}
+		else if (nilai >= 72){
+			jml = 2;
+			huruf[0] = 'A';
+			huruf[1] = 'B';
+			idx = 3.5;
+		}
+		else if (nilai >= 65){
+			huruf[0] = 'B';
+			idx = 3;
+		}
+		else if (nilai >= 58){
+			jml = 2;
+			huruf[0] = 'B';
+			huruf[1] = 'C';
+			idx = 2.5;
+		}
+		else if (nilai >= 50){
+			huruf[0] = 'C';
+			idx = 2;
+		}
+		else if (nilai >= 40){
+			huruf[0] = 'D';
+			idx = 1;
+		}
+		else {
+			huruf[0] = 'E';
+			idx = 0;
+		}
+		//cout << jml << endl;
+
+		if (jml == 1){
+			cout << nilai << ";" << huruf[0] << ";" << idx << endl;
+		}
+		else if (jml == 2){
+			//cout <<"masuk" << endl;
+			cout << nilai << ";" << huruf[0] << huruf[1] << ";" << idx << endl;
+		}*/
+		cout << nilai << endl;
+ 	}
 }
 
 int main() {
 	srand(time(0));
-	randnilai(4214);
+	randnilai(3);
 	//cellphonenumber(600);
 	//homephonenumber(600);
 	//randnumber(80, 1, 2, 4);
