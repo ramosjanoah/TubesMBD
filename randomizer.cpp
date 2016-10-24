@@ -106,7 +106,7 @@ void randnilai (int n) {
 
 int main() {
 	srand(time(0));
-	randnilai(3);
+	randnilai(4004);
 	//cellphonenumber(600);
 	//homephonenumber(600);
 	//randnumber(80, 1, 2, 4);
