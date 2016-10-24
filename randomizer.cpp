@@ -6,6 +6,47 @@
 
 using namespace std;
 
+void coutndigits(int x, int n) {
+	//Mencout int x menjadi n digit
+	//I.S. : digit x < n
+	int xold = x;
+	int nzero = n;
+	if (x == 0) {
+		nzero -= 1;
+	} else {
+		while (x != 0) {
+			nzero --;
+			x /= 10;
+		}
+	}
+
+	for (int i = 0; i < nzero; i++) {
+		cout << 0;
+	}
+	cout << xold << endl;
+}
+
+void nimmahasiswa_pt () {
+	for (int thn = 14; thn <= 16; thn++) {
+		for (int nimif = 1; nimif <= 50; nimif++) {
+			cout << 135 << thn;
+			coutndigits(nimif, 3);
+		}
+		for (int nimel = 1; nimel <= 50; nimel++) {
+			cout << 132 << thn;
+			coutndigits(nimel, 3);			
+		}
+		for (int nimar = 1; nimar <= 50; nimar++) {
+			cout << 152 << thn;
+			coutndigits(nimar, 3);	
+		}
+		for (int nimsi = 1; nimsi <= 50; nimsi++) {
+			cout << 150 << thn;
+			coutndigits(nimsi, 3);
+		}
+	}
+}
+
 void kodematkul () {
 	for (int i = 0; i < 56; i++) {
 		cout << "IF" << i / 14 + 1 << (i / 7) % 2 + 1;
@@ -100,6 +141,62 @@ void sks () {
 	int nmatkulpilihan = 14;
 
 	int sks[nfak][nsmt][nmatkul];
+
+	for (int fak = 0; fak < nfak; fak++) {
+		for (int smt = 0; smt < nsmt; smt++) {
+			for (int matkul = 0; matkul < nmatkul; matkul++) {
+				sks[fak][smt][matkul] = 3;
+			}
+		}
+	}
+
+	int nshuffle = 10;
+
+	for (int fak = 0; fak < nfak; fak++) {
+		for (int smt = 0; smt < nsmt; smt++) {
+			for (int i = 0; i < nshuffle; i++) {
+				int sksplus = rand() % nmatkul;
+				sks[fak][smt][sksplus]++;
+				int sksmin = 0;
+				do {
+					sksmin = rand() % nmatkul;
+				} while (sks[fak][smt][sksmin] <= 2);
+				sks[fak][smt][sksmin]--;
+			}
+		}
+	}
+	//DEBUG PURPOSE ONLY
+	/*for (int fak = 0; fak < nfak; fak++) {
+		for (int smt = 0; smt < nsmt; smt++) {
+			int jumSksSmt = 0;
+			for (int matkul = 0; matkul < nmatkul; matkul++) {
+				cout << sks[fak][smt][matkul] << endl;
+				jumSksSmt += sks[fak][smt][matkul];
+			}
+			cout << '<' << jumSksSmt << '>' << endl;
+		}
+		cout << endl << "==========" << endl << endl;
+	}*/
+	int cnt = 0;
+	for (int fak = 0; fak < nfak; fak++) {
+		for (int smt = 0; smt < nsmt; smt++) {
+			for (int matkul = 0; matkul < nmatkul; matkul++) {
+				cout << sks[fak][smt][matkul] << endl;
+				cnt ++;
+			}
+		}
+		if (fak == 2) {
+			nmatkulpilihan -= 1;
+		}
+		for (int matkulpilihan = 0; matkulpilihan < nmatkulpilihan; matkulpilihan++) {
+			cout << rand() % 4 + 1 << endl;
+			cnt ++;
+		}
+		if (fak == 2) {
+			nmatkulpilihan += 1;
+		}
+	}
+	//cout << "cnt = " << cnt << endl;
 }
 
 void randnilai (int n) {
@@ -108,7 +205,7 @@ void randnilai (int n) {
 	float idx;
 	int jml = 1;
 	for (int i = 1; i <= n; i++){
-		nilai = rand() % 60 + 41;
+		nilai =	 rand() % 60 + 41;
 		/*jml = 1;
 		nilai = rand() % 60 + 41;
 		if (nilai >= 80){
@@ -185,7 +282,8 @@ void randskhun(int n){
 
 int main() {
 	srand(time(NULL));
-	sks();
+	//sks();
+	nimmahasiswa_pt();
 
 	//cellphonenumber(600);
 	//homephonenumber(600);
