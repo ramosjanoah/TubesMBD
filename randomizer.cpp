@@ -104,9 +104,37 @@ void randnilai (int n) {
  	}
 }
 
+void randskhun(int n){
+	int nilai;
+	for (int i = 1; i <= n; i++){
+		for (int j = 1; j <= 20; j++){
+			if ((j == 2) or (j == 5) or (j == 8) or (j == 11) or (j == 15) or (j == 19)){
+				cout << '-';
+			}
+			else if (j == 1){
+				nilai = rand() % 2 + 3;
+				cout << nilai;
+			}
+			else if (j == 3){
+				cout << 1;
+			}
+			else if (j == 4){
+				nilai = rand() % 3 + 3;
+				cout << nilai;
+			}
+			else{
+				nilai = rand() % 10;
+				cout << nilai;
+			}
+		}
+		cout << endl;
+	}
+}
+
 int main() {
 	srand(time(0));
-	randnilai(4004);
+	randskhun(600);
+	//randnilai(4214);
 	//cellphonenumber(600);
 	//homephonenumber(600);
 	//randnumber(80, 1, 2, 4);
