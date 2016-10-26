@@ -1,0 +1,22 @@
+1. Menampilkan nama, nim, jml sks yg sdh diambil diurutkan berdasarkan nim
+2. Menampilkan kode matakuliah, nama kelas dan dosen yang mengajar, dan rata2 nilai dari kelas
+
+1. nama dari mahasiswa
+	nim dari mahasiswa_pt
+	sks dari nilai
+
+2. kode dari mata_kuliah
+	nama kelas dari kelas_kuliah
+	nama dosen dari dosen_pt, dosen, dan ajar_dosen
+	rata" nilai dari agregasi nilai
+
+1.
+SELECT nama_pd, nim, SUM(sks_mk)
+FROM mahasiswa NATURAL JOIN mahasiswa_pt NATURAL JOIN nilai NATURAL JOIN kelas_kuliah
+GROUP BY nama_pd, nim
+ORDER BY nim;
+
+2.
+SELECT kode_mk, nama_kelas, nama_ptk, AVG(nilai_angka)
+FROM mata_kuliah NATURAL JOIN kelas_kuliah NATURAL JOIN ajar_dosen NATURAL JOIN dosen_pt NATURAL JOIN dosen NATURAL JOIN nilai
+GROUP BY kode_mk, nama_kelas, nama_ptk;
