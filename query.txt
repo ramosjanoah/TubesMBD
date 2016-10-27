@@ -63,77 +63,64 @@ NATURAL JOIN(
 GROUP BY kode_mk, nama_kelas, nama_ptk;
 
 3.
-SELECT nim, id_smt, (sum(mata_kuliah.sks_mk * nilai.nilai_indeks) / sum(mata_kuliah.sks_mk)) as IP
-FROM mahasiswa_pt natural join nilai natural join kelas_kuliah 
-	natural join mata_kuliah
-WHERE nim = '13514001'
-GROUP BY nim, id_smt;
+SELECT nama_pd, nim, id_smt, ip from
+	mahasiswa natural join mahasiswa_pt natural join
+	(SELECT nim, id_smt, (sum(mata_kuliah.sks_mk * nilai.nilai_indeks) / sum(mata_kuliah.sks_mk)) as IP
+	FROM mahasiswa_pt natural join nilai natural join kelas_kuliah 
+		natural join mata_kuliah
+	WHERE nim = '13514001'
+	GROUP BY nim, id_smt) as T2;
 
 SELECT nim, id_smt, (sum(sks_mk * nilai_indeks) / sum(sks_mk)) as IP
-FROM mahasiswa_pt
+FROM 
+	(SELECT nama_pd, id_pd
+	FROM mahasiswa) as A
+NATURAL JOIN (
+	SELECT id_reg_pd,id_pd, nim
+	FROM mahasiswa_pt) as B 
 NATURAL JOIN (
 	SELECT id_reg_pd, id_kls, nilai_indeks
-	FROM nilai) as A
+	FROM nilai) as C
 NATURAL JOIN (
 	SELECT id_kls, id_mk, id_smt
-	FROM kelas_kuliah) as B
+	FROM kelas_kuliah) as D
 NATURAL JOIN (
 	SELECT id_mk, sks_mk
-	FROM mata_kuliah) as C 
+	FROM mata_kuliah) as E
 WHERE nim = '13514001'
 GROUP BY nim, id_smt;
 
 4.
 SELECT nama_pd, nim, IPK from 
-( 	( SELECT * FROM mahasiswa NATURAL JOIN mahasiswa_pt
-	) as T1 
+( 	( SELECT * FROM mahasiswa NATURAL JOIN mahasiswa_pt	) as T1 
 	NATURAL JOIN 
 	( SELECT nim, (sum(mata_kuliah.sks_mk * nilai.nilai_indeks) / sum(mata_kuliah.sks_mk)) as IPK
 	FROM mahasiswa_pt natural join nilai natural join kelas_kuliah 
 		natural join mata_kuliah
 	GROUP BY nim) as T2
-);
-
-<<<<<<< HEAD
-UPDATE mahasiswa_pt as M SET ipk = ( 
-	SELECT ipk FROM
-		( 
-			SELECT nim, (sum(mata_kuliah.sks_mk * nilai.nilai_indeks) / sum(mata_kuliah.sks_mk)) as IPK
-			FROM mahasiswa_pt natural join nilai natural join kelas_kuliah natural join mata_kuliah 
-			GROUP BY nim
-		) AS I	
-	WHERE I.nim = M.nim
-);
-
-UPDATE mahasiswa_pt
-SET ipk = (
-SELECT ipk FROM (
-( SELECT nim, (sum(mata_kuliah.sks_mk * nilai.nilai_indeks) / sum(mata_kuliah.sks_mk)) as IPK
-	FROM mahasiswa_pt natural join nilai natural join kelas_kuliah 
-		natural join mata_kuliah
-	GROUP BY nim
 )
-WHERE mahasiswa_pt.nim = nim));
-=======
-// Migrasi Database;
-INSERT INTO alt_dosen_pt 
-SELECT id_reg_ptk, a_aktif_bulan_1, a_aktif_bulan_2, 
-a_aktif_bulan_3, a_aktif_bulan_4,a_aktif_bulan_5, 
-a_aktif_bulan_6, a_aktif_bulan_7, a_aktif_bulan_8, 
-a_aktif_bulan_9, a_aktif_bulan_10, a_aktif_bulan_11, 
-a_aktif_bulan_12 FROM dosen_pt;
 
-ALTER TABLE dosen_pt 
-DROP COLUMN a_aktif_bulan_1,
-DROP COLUMN a_aktif_bulan_2,
-DROP COLUMN a_aktif_bulan_3,
-DROP COLUMN a_aktif_bulan_4,
-DROP COLUMN a_aktif_bulan_5,
-DROP COLUMN a_aktif_bulan_6,
-DROP COLUMN a_aktif_bulan_7,
-DROP COLUMN a_aktif_bulan_8,
-DROP COLUMN a_aktif_bulan_9,
-DROP COLUMN a_aktif_bulan_10,
-DROP COLUMN a_aktif_bulan_11,
-DROP COLUMN a_aktif_bulan_12;
->>>>>>> c7d77f35fbad65bbf100f02ee5e6ba3133386067
+
+
+
+SETELAH SCHEMA TUNING:
+
+1.
+SELECT nama_pd, nim, SUM(sks_mk)
+FROM mahasiswa_pt NATURAL JOIN nilai NATURAL JOIN kelas_kuliah
+GROUP BY nama_pd, nim
+ORDER BY nim;
+
+2.
+SELECT kode_mk, nama_kelas, nama_ptk, AVG(nilai_angka)
+FROM mata_kuliah NATURAL JOIN kelas_kuliah NATURAL JOIN nilai
+GROUP BY kode_mk, nama_kelas, nama_ptk;
+
+3. SELECT nama_pd, nim, id_smt, (sum(mata_kuliah.sks_mk * nilai.nilai_indeks) / sum(mata_kuliah.sks_mk)) as IP
+FROM mahasiswa_pt natural join nilai natural join kelas_kuliah 
+	natural join mata_kuliah
+WHERE nim = '13514001'
+GROUP BY nim, id_smt;
+
+4.
+SELECT nama_pd, nim, ipk from mahasiswa_pt
