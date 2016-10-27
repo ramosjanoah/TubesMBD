@@ -1,0 +1,2 @@
+SELECT DISTINCT namadepanpenonton FROM penonton NATURAL JOIN penontonfilm NATURAL JOIN aktorfilm WHERE aktorid NOT IN ( SELECT aktorid FROM ( SELECT aktorid, DATE_PART('year', NOW()) - DATE_PART('year', tanggallahiraktor) as age FROM aktor ) as old WHERE old.age < 30 );
+

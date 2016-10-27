@@ -91,6 +91,25 @@ SELECT nama_pd, nim, IPK from
 	( SELECT nim, (sum(mata_kuliah.sks_mk * nilai.nilai_indeks) / sum(mata_kuliah.sks_mk)) as IPK
 	FROM mahasiswa_pt natural join nilai natural join kelas_kuliah 
 		natural join mata_kuliah
-	WHERE nim = '13514001'
 	GROUP BY nim) as T2
 );
+
+UPDATE mahasiswa_pt as M SET ipk = ( 
+	SELECT ipk FROM
+		( 
+			SELECT nim, (sum(mata_kuliah.sks_mk * nilai.nilai_indeks) / sum(mata_kuliah.sks_mk)) as IPK
+			FROM mahasiswa_pt natural join nilai natural join kelas_kuliah natural join mata_kuliah 
+			GROUP BY nim
+		) AS I	
+	WHERE I.nim = M.nim
+);
+
+UPDATE mahasiswa_pt
+SET ipk = (
+SELECT ipk FROM (
+( SELECT nim, (sum(mata_kuliah.sks_mk * nilai.nilai_indeks) / sum(mata_kuliah.sks_mk)) as IPK
+	FROM mahasiswa_pt natural join nilai natural join kelas_kuliah 
+		natural join mata_kuliah
+	GROUP BY nim
+)
+WHERE mahasiswa_pt.nim = nim));

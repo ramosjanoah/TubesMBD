@@ -1,0 +1,1 @@
+SELECT DISTINCT namadepanpenonton FROM penonton NATURAL JOIN film WHERE penontonID in ( SELECT penontonID FROM penontonfilm NATURAL JOIN aktorfilm NATURAL JOIN aktor WHERE DATE_PART('year', NOW()) - DATE_PART('year', tanggallahiraktor) > 30 );  

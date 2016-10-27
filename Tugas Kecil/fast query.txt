@@ -1,0 +1,34 @@
+SELECT namadepanpenonton FROM (
+(SELECT namadepanpenonton, penontonid FROM penonton) as pntn
+NATURAL JOIN
+(SELECT DISTINCT penontonid FROM penontonfilm WHERE filmid IN
+(SELECT DISTINCT filmid FROM aktorfilm WHERE aktorid IN
+(SELECT aktorid
+FROM aktor
+WHERE (DATE_PART('year', NOW()) - DATE_PART('year',tanggallahiraktor) > 30)))) as flm);
+
+SELECT namadepanpenonton FROM (
+	SELECT DISTINCT namadepanpenonton, penontonid FROM penonton NATURAL JOIN (
+		SELECT DISTINCT penontonid, filmid FROM penontonfilm NATURAL JOIN (
+			SELECT DISTINCT filmid, aktorid FROM aktorfilm NATURAL JOIN (
+				SELECT DISTINCT aktorid FROM aktor WHERE (DATE_PART('year', NOW()) - DATE_PART('year',tanggallahiraktor) > 30)
+			) as distinct1
+		) as distinct2
+	) as distinct3
+) as distinct4;
+
+SELECT DISTINCT namadepanpenonton FROM penonton WHERE penontonid IN (
+	SELECT DISTINCT penontonid FROM penontonfilm WHERE filmid IN (
+		SELECT DISTINCT filmid FROM aktorfilm WHERE aktorid IN (
+			SELECT DISTINCT aktorid FROM aktor WHERE (DATE_PART('year', NOW()) - DATE_PART('year',tanggallahiraktor) > 30)
+		)
+	)
+);
+
+SELECT DISTINCT namadepanpenonton FROM penonton WHERE penontonid NOT IN (
+	SELECT DISTINCT penontonid FROM penontonfilm WHERE filmid NOT IN (
+		SELECT DISTINCT filmid FROM aktorfilm WHERE aktorid NOT IN (
+			SELECT DISTINCT aktorid FROM aktor WHERE (DATE_PART('year', NOW()) - DATE_PART('year',tanggallahiraktor) <= 30)
+		)
+	)
+);
