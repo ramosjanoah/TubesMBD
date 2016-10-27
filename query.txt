@@ -156,7 +156,8 @@ SETELAH QUERY TUNING :
 SELECT nama_pd, nim, id_smt, (sum(sks_mk * nilai_indeks) / sum(sks_mk)) as IP
 FROM (
 	SELECT id_reg_pd, nim, nama_pd
-	FROM mahasiswa_pt) as A 
+	FROM mahasiswa_pt
+	WHERE nim = '13514001') as A 
 NATURAL JOIN (
 	SELECT id_reg_pd, id_kls, nilai_indeks
 	FROM nilai) as B
