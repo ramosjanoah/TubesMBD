@@ -167,7 +167,6 @@ NATURAL JOIN (
 NATURAL JOIN (
 	SELECT id_mk, sks_mk
 	FROM mata_kuliah) as D
-WHERE nim = '13514001'
 GROUP BY nama_pd, nim, id_smt;
 
 4.
