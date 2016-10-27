@@ -98,7 +98,7 @@ SELECT nama_pd, nim, IPK from
 	FROM mahasiswa_pt natural join nilai natural join kelas_kuliah 
 		natural join mata_kuliah
 	GROUP BY nim) as T2
-)
+);
 
 
 
@@ -120,7 +120,7 @@ GROUP BY kode_mk, nama_kelas, nama_ptk;
 FROM mahasiswa_pt natural join nilai natural join kelas_kuliah 
 	natural join mata_kuliah
 WHERE nim = '13514001'
-GROUP BY nim, id_smt;
+GROUP BY nama_pd, nim, id_smt;
 
 4.
 SELECT nama_pd, nim, ipk from mahasiswa_pt
