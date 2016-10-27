@@ -9,7 +9,7 @@ SET nama_pd = mahasiswa.nama_pd
 FROM mahasiswa
 WHERE mahasiswa_pt.id_pd = mahasiswa.id_pd;
 
-
+//NAMA DOSEN
 //ADD REDUNDANT COLUMN in kelas_kuliah with id_reg_ptk
  
 ALTER TABLE kelas_kuliah
