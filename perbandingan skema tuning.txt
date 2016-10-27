@@ -1,0 +1,80 @@
+
+
+PERBANDINGAN DOSEN
+
+sebelum
+
+inten=# EXPLAIN ANALYZE
+inten-# SELECT kode_mk, nama_kelas, nama_ptk, AVG(nilai_angka)
+inten-# FROM mata_kuliah NATURAL JOIN kelas_kuliah NATURAL JOIN ajar_dosen NATURAL JOIN dosen_pt NATURAL JOIN dosen NATURAL JOIN nilai
+inten-# GROUP BY kode_mk, nama_kelas, nama_ptk;
+                                                                                                                                QUERY PLAN                              
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate  (cost=83.59..84.09 rows=20 width=58) (actual time=56.821..60.331 rows=223 loops=1)
+   Group Key: mata_kuliah.kode_mk, kelas_kuliah.nama_kelas, kelas_kuliah.nama_ptk
+   ->  Sort  (cost=83.59..83.64 rows=20 width=58) (actual time=56.787..57.203 rows=16416 loops=1)
+         Sort Key: mata_kuliah.kode_mk, kelas_kuliah.nama_kelas, kelas_kuliah.nama_ptk
+         Sort Method: quicksort  Memory: 2808kB
+         ->  Nested Loop  (cost=31.83..83.16 rows=20 width=58) (actual time=1.373..26.902 rows=16416 loops=1)
+               ->  Nested Loop  (cost=31.55..79.70 rows=1 width=62) (actual time=0.693..13.150 rows=831 loops=1)
+                     Join Filter: ((kelas_kuliah.nama_ptk)::text = (dosen.nama_ptk)::text)
+                     ->  Nested Loop  (cost=31.40..79.46 rows=1 width=71) (actual time=0.684..9.119 rows=831 loops=1)
+                           ->  Nested Loop  (cost=31.26..79.24 rows=1 width=103) (actual time=0.665..4.011 rows=831 loops=1)
+                                 ->  Hash Join  (cost=31.11..79.05 rows=1 width=100) (actual time=0.651..1.919 rows=837 loops=1)
+                                       Hash Cond: ((kelas_kuliah.sks_tm = ajar_dosen.sks_tm) AND (kelas_kuliah.sks_prak = ajar_dosen.sks_prak) AND (kelas_kuliah.id_kls = ajar_dosen.id_kls) AND (kelas_kuliah.id_reg_ptk = ajar_dosen.id_reg_ptk))
+                                       ->  Seq Scan on kelas_kuliah  (cost=0.00..35.37 rows=837 width=88) (actual time=0.044..0.244 rows=837 loops=1)
+                                       ->  Hash  (cost=14.37..14.37 rows=837 width=20) (actual time=0.538..0.538 rows=837 loops=1)
+                                             Buckets: 1024  Batches: 1  Memory Usage: 51kB
+                                             ->  Seq Scan on ajar_dosen  (cost=0.00..14.37 rows=837 width=20) (actual time=0.031..0.232 rows=837 loops=1)
+                                 ->  Index Scan using dosen_pt_pkey on dosen_pt  (cost=0.14..0.18 rows=1 width=15) (actual time=0.002..0.002 rows=1 loops=837)
+                                       Index Cond: (id_reg_ptk = kelas_kuliah.id_reg_ptk)
+                                       Filter: (kelas_kuliah.id_sms = id_sms)
+                                       Rows Removed by Filter: 0
+                           ->  Index Scan using mata_kuliah_pkey on mata_kuliah  (cost=0.15..0.21 rows=1 width=26) (actual time=0.005..0.005 rows=1 loops=831)
+                                 Index Cond: (id_mk = kelas_kuliah.id_mk)
+                                 Filter: ((kelas_kuliah.id_sms = id_sms) AND (kelas_kuliah.sks_mk = sks_mk) AND (kelas_kuliah.sks_tm = sks_tm) AND (kelas_kuliah.sks_prak = sks_prak) AND (kelas_kuliah.sks_prak_lap = sks_prak_lap) AND (kelas_kuliah.sks_sim = sks_sim))
+                     ->  Index Scan using dosen_pkey on dosen  (cost=0.14..0.23 rows=1 width=22) (actual time=0.004..0.004 rows=1 loops=831)
+                           Index Cond: (id_ptk = dosen_pt.id_ptk)
+               ->  Index Scan using nilai_pkey on nilai  (cost=0.29..2.72 rows=74 width=16) (actual time=0.008..0.013 rows=20 loops=831)
+                     Index Cond: (id_kls = (kelas_kuliah.id_kls)::bpchar)
+ Planning time: 69.379 ms
+ Execution time: 60.949 ms
+(29 rows)
+
+sesudah
+
+inten=# EXPLAIN ANALYZE
+inten-# SELECT kode_mk, nama_kelas, nama_ptk, AVG(nilai_angka)
+inten-# FROM mata_kuliah NATURAL JOIN kelas_kuliah NATURAL JOIN ajar_dosen NATURAL JOIN alt_dosen_pt NATURAL JOIN dosen NATURAL JOIN nilai
+inten-# GROUP BY kode_mk, nama_kelas, nama_ptk;
+                                                                                                                                   QUERY PLAN                           
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate  (cost=87.19..87.69 rows=20 width=58) (actual time=4.452..4.452 rows=0 loops=1)
+   Group Key: mata_kuliah.kode_mk, kelas_kuliah.nama_kelas, kelas_kuliah.nama_ptk
+   ->  Sort  (cost=87.19..87.24 rows=20 width=58) (actual time=4.451..4.451 rows=0 loops=1)
+         Sort Key: mata_kuliah.kode_mk, kelas_kuliah.nama_kelas, kelas_kuliah.nama_ptk
+         Sort Method: quicksort  Memory: 25kB
+         ->  Nested Loop  (cost=31.70..86.76 rows=20 width=58) (actual time=4.413..4.413 rows=0 loops=1)
+               ->  Nested Loop  (cost=31.41..83.30 rows=1 width=62) (actual time=4.413..4.413 rows=0 loops=1)
+                     Join Filter: ((kelas_kuliah.nama_ptk)::text = (dosen.nama_ptk)::text)
+                     ->  Nested Loop  (cost=31.41..79.50 rows=1 width=62) (actual time=4.412..4.412 rows=0 loops=1)
+                           ->  Nested Loop  (cost=31.26..79.26 rows=1 width=70) (actual time=0.398..4.028 rows=835 loops=1)
+                                 ->  Hash Join  (cost=31.11..79.05 rows=1 width=100) (actual time=0.385..1.015 rows=837 loops=1)
+                                       Hash Cond: ((kelas_kuliah.sks_tm = ajar_dosen.sks_tm) AND (kelas_kuliah.sks_prak = ajar_dosen.sks_prak) AND (kelas_kuliah.id_kls = ajar_dosen.id_kls) AND (kelas_kuliah.id_reg_ptk = ajar_dosen.id_reg_ptk))
+                                       ->  Seq Scan on kelas_kuliah  (cost=0.00..35.37 rows=837 width=88) (actual time=0.023..0.129 rows=837 loops=1)
+                                       ->  Hash  (cost=14.37..14.37 rows=837 width=20) (actual time=0.326..0.326 rows=837 loops=1)
+                                             Buckets: 1024  Batches: 1  Memory Usage: 51kB
+                                             ->  Seq Scan on ajar_dosen  (cost=0.00..14.37 rows=837 width=20) (actual time=0.015..0.145 rows=837 loops=1)
+                                 ->  Index Scan using mata_kuliah_pkey on mata_kuliah  (cost=0.15..0.21 rows=1 width=26) (actual time=0.003..0.003 rows=1 loops=837)
+                                       Index Cond: (id_mk = kelas_kuliah.id_mk)
+                                       Filter: ((kelas_kuliah.id_sms = id_sms) AND (kelas_kuliah.sks_mk = sks_mk) AND (kelas_kuliah.sks_tm = sks_tm) AND (kelas_kuliah.sks_prak = sks_prak) AND (kelas_kuliah.sks_prak_lap = sks_prak_lap) AND (kelas_kuliah.sks_sim = sks_sim))
+                                       Rows Removed by Filter: 0
+                           ->  Index Only Scan using alt_dosen_pt_pkey on alt_dosen_pt  (cost=0.15..0.22 rows=1 width=4) (actual time=0.000..0.000 rows=0 loops=835)
+                                 Index Cond: (id_reg_ptk = kelas_kuliah.id_reg_ptk)
+                                 Heap Fetches: 0
+                     ->  Seq Scan on dosen  (cost=0.00..2.80 rows=80 width=13) (never executed)
+               ->  Index Scan using nilai_pkey on nilai  (cost=0.29..2.72 rows=74 width=16) (never executed)
+                     Index Cond: (id_kls = (kelas_kuliah.id_kls)::bpchar)
+ Planning time: 7.812 ms
+ Execution time: 4.623 ms
+(28 rows)

@@ -1,0 +1,62 @@
+
+//Add redundant column in mahasiswa_pt with nama_pd
+
+ALTER TABLE mahasiswa_pt
+ADD COLUMN nama_pd character varying(255);
+
+UPDATE mahasiswa_pt
+SET nama_pd = mahasiswa.nama_pd
+FROM mahasiswa
+WHERE mahasiswa_pt.id_pd = mahasiswa.id_pd;
+
+//NAMA DOSEN
+//ADD REDUNDANT COLUMN in kelas_kuliah with id_reg_ptk
+ 
+ALTER TABLE kelas_kuliah
+ADD COLUMN id_reg_ptk integer;
+
+UPDATE kelas_kuliah
+SET id_reg_ptk = ajar_dosen.id_reg_ptk
+FROM ajar_dosen
+WHERE kelas_kuliah.id_kls = ajar_dosen.id_kls;
+
+//ADD REDUNDANT COLUMN in kelas_kuliah with nama_ptk (add id_reg_ptk dulu baru nama)
+
+ALTER TABLE kelas_kuliah
+ADD COLUMN nama_ptk character varying(50);
+
+UPDATE kelas_kuliah
+SET nama_ptk = T.nama_ptk
+FROM (ajar_dosen natural join dosen_pt natural join dosen) as T
+WHERE kelas_kuliah.id_kls = T.id_kls;
+
+//Splitting
+CREATE TABLE alt_dosen_pt ( LIKE dosen_pt INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES);
+ALTER TABLE alt_dosen_pt ALTER id_reg_ptk DROP DEFAULT;
+
+ALTER TABLE alt_dosen_pt
+DROP COLUMN id_ptk,
+DROP COLUMN id_tahun_ajaran,
+DROP COLUMN id_sms;
+
+INSERT INTO alt_dosen_pt 
+SELECT id_reg_ptk, a_aktif_bulan_1, a_aktif_bulan_2, 
+a_aktif_bulan_3, a_aktif_bulan_4,a_aktif_bulan_5, 
+a_aktif_bulan_6, a_aktif_bulan_7, a_aktif_bulan_8, 
+a_aktif_bulan_9, a_aktif_bulan_10, a_aktif_bulan_11, 
+a_aktif_bulan_12 FROM dosen_pt;
+
+ALTER TABLE dosen_pt 
+DROP COLUMN a_aktif_bulan_1,
+DROP COLUMN a_aktif_bulan_2,
+DROP COLUMN a_aktif_bulan_3,
+DROP COLUMN a_aktif_bulan_4,
+DROP COLUMN a_aktif_bulan_5,
+DROP COLUMN a_aktif_bulan_6,
+DROP COLUMN a_aktif_bulan_7,
+DROP COLUMN a_aktif_bulan_8,
+DROP COLUMN a_aktif_bulan_9,
+DROP COLUMN a_aktif_bulan_10,
+DROP COLUMN a_aktif_bulan_11,
+DROP COLUMN a_aktif_bulan_12;
+
