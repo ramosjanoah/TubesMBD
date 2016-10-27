@@ -1,0 +1,31 @@
+
+//Add redundant column in mahasiswa_pt with nama_pd
+
+ALTER TABLE mahasiswa_pt
+ADD COLUMN nama_pd character varying(255);
+
+UPDATE mahasiswa_pt
+SET nama_pd = mahasiswa.nama_pd
+FROM mahasiswa
+WHERE mahasiswa_pt.id_pd = mahasiswa.id_pd;
+
+
+//ADD REDUNDANT COLUMN in kelas_kuliah with id_reg_ptk
+ 
+ALTER TABLE kelas_kuliah
+ADD COLUMN id_reg_ptk integer;
+
+UPDATE kelas_kuliah
+SET id_reg_ptk = ajar_dosen.id_reg_ptk
+FROM ajar_dosen
+WHERE kelas_kuliah.id_kls = ajar_dosen.id_kls;
+
+//ADD REDUNDANT COLUMN in kelas_kuliah with nama_ptk (add id_reg_ptk dulu baru nama)
+
+ALTER TABLE kelas_kuliah
+ADD COLUMN nama_ptk character varying(50);
+
+UPDATE kelas_kuliah
+SET nama_ptk = T.nama_ptk
+FROM (ajar_dosen natural join dosen_pt natural join dosen) as T
+WHERE kelas_kuliah.id_kls = T.id_kls;
